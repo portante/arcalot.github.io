@@ -65,53 +65,53 @@ First, you will have to set up your environment.
 
 ### Create the Plugin Package
 
-=== "Using Poetry"
+=== "From the [template repository](https://github.com/arcalot/arcaflow-plugin-template-python)"
 
-    1. Fulfill requirements
+    1. Fulfill requirements.
           1. Python 3.9
           2. Poetry 1.2
 
-    2. Fork, then clone the [template repository](https://github.com/arcalot/arcaflow-plugin-template-python)
+    2. Fork, then clone the [template repository](https://github.com/arcalot/arcaflow-plugin-template-python).
 
-    3. Change into the template repository directory
+    3. Change into the template repository directory.
 
-    4. Set this package's Python virtual environment to use your Python 3.9:
+    4. Set this package's Python virtual environment to use your Python 3.9.
 
         ```
         poetry env use $(which python3)
         ```
 
-    5. Install the software dependencies from `poetry.lock`:
+    5. Install the software dependencies from `poetry.lock`.
 
         ```
-        poetry update
+        poetry install
         ```
 
-    6. Activate the Python virtual environment
+    6. Activate the Python virtual environment.
 
         ```
         poetry shell
         ```
 
-    7. Run the test plugin:
+    7. Run the test plugin.
 
         ```
         python example_plugin.py -f example.yaml
         ```
 
-    8. Run the unit tests:
+    8. Run the unit tests.
 
         ```
         python3 test_example_plugin.py
         ```
 
-    9. Generate a JSON schema:
+    9. Generate a JSON schema.
 
         ```
         python3 example_plugin.py --json-schema input >example.schema.json
         ```
 
-        If you are using the [YAML plugin for VSCode](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml), add the following line to the top of your config file for code completion:
+        If you are using the [YAML plugin for VSCode](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml), add the following line to the top of your config file for code completion.
 
         ```
         # yaml-language-server: $schema=example.schema.json
@@ -120,53 +120,6 @@ First, you will have to set up your environment.
     10. Copy and customize the [Dockerfile](https://github.com/arcalot/arcaflow-plugin-template-python/blob/main/Dockerfile) from the example repository.
 
     11.  Set up your CI/CD system as you see fit.
-
-=== "Using pip"
-
-    1. Create an empty folder.
-    2. Create a `requirements.txt` with the following content:
-           ```
-           arcaflow-plugin-sdk
-           ```
-    3. Figure out the right command to call your Python version:
-           ```
-           python3.10 --version
-           python3.9 --version
-           python3 --version
-           python --version
-           ```
-       Make sure you have at least Python 3.9.
-    4. Create a [virtualenv](https://virtualenv.pypa.io/en/latest/) in your project directory using the following command, replacing your Python call:
-           ```
-           python -m venv venv
-           ```
-    5. Activate the venv:
-           ```
-           source venv/bin/activate
-           ```
-    6. Install the dependencies:
-           ```
-           pip install -r requirements.txt
-           ```
-    7. Copy the [example plugin](https://github.com/arcalot/arcaflow-plugin-template-python/blob/main/example_plugin.py), [example config](https://github.com/arcalot/arcaflow-plugin-template-python/blob/main/example.yaml) and the [tests](https://github.com/arcalot/arcaflow-plugin-template-python/blob/main/test_example_plugin.py) to your directory.
-    8. Run the test plugin:
-           ```
-           ./example_plugin.py -f example.yaml
-           ```
-    9. Run the unit tests:
-           ```
-           ./test_example_plugin.py
-           ```
-    10. Generate a JSON schema:
-           ```
-           ./example_plugin.py --json-schema input >example.schema.json
-           ```
-      If you are using the [YAML plugin for VSCode](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml), add the following line to the top of your config file for code completion:
-           ```
-           # yaml-language-server: $schema=example.schema.json
-           ```
-    11. Copy and customize the [Dockerfile](https://github.com/arcalot/arcaflow-plugin-template-python/blob/main/Dockerfile) from the example repository.
-    12. Set up your CI/CD system as you see fit.
 
 
 
@@ -890,6 +843,11 @@ However, the example above requires you to provide the data as a `dict`, not a `
 - `yourschema.unserialize_input()` to turn a `dict` into a `dataclass` needed for your steps
 - `yourschema.call_step()` to run a step with the unserialized `dataclass`
 - `yourschema.serialize_output()` to turn the output `dataclass` into a `dict`
+
+
+## Publishing your Plugin
+
+
 
 
 ## FAQ
