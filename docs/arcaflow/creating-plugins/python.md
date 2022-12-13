@@ -1,15 +1,32 @@
-# Creating plugins with Python
+# Creating Plugins with Python
 
-If you want to create an Arcaflow plugin in Python, you will need four things:
+Acraflow supports plugins written in Python under version 3.9 or later, using
+either the C Python or [PyPy](https://www.pypy.org/) interpreters.
+
+One needs each of the following to begin the process of building an Arcaflow
+plugin in Python:
 
 1. A container engine that can build images
-2. Python 3.9+ ([PyPy](https://www.pypy.org/) is supported)
-3. The [Python SDK for Arcaflow plugins](https://github.com/arcalot/arcaflow-plugin-sdk-python)
-4. [Poetry 1.2+](https://github.com/python-poetry/poetry)
+2. Python 3.9+ (C Python or [PyPy](https://www.pypy.org/))
+3. The Python [SDK](https://github.com/arcalot/arcaflow-plugin-sdk-python) for Arcaflow plugins
 
-The easiest way is to start from the [template repository for Python plugins](https://github.com/arcalot/arcaflow-plugin-template-python), but starting from scratch is also fully supported.
+The steps below leverage the use of [Poetry
+1.2+](https://github.com/python-poetry/poetry), but its use is not required
+for an Arcaflow python plugin.  Feel free to replace those steps using
+`poetry` with whatever suites your needs.
 
-Before you start please familiarize yourself with the [Arcaflow type system](../concepts/typing.md).
+> The Arcaflow suite of supported plugins, and the python
+> [SDK](https://github.com/arcalot/arcaflow-plugin-sdk-python), including the
+> [example plugin](https://github.com/arcalot/arcaflow-plugin-template-python),
+> leverage `poetry` for their python module dependency and PyPI packaging
+> needs.
+
+The easiest way is to start from the [template repository for Python
+plugins](https://github.com/arcalot/arcaflow-plugin-template-python), but
+starting from scratch is also fully supported.
+
+Before you start please familiarize yourself with the [Arcaflow type
+system](../concepts/typing.md).
 
 ## Setting up your environment
 
@@ -18,94 +35,78 @@ First, you will have to set up your environment.
 ### Install Poetry
 
 1. Ensure your `python3` executable is at least version 3.9.
+   ```
+   python3 --version
+   # Python 3.9.15
+   ```
+1. If it is not, install Python 3.9.
+   - "RHEL, CentOS, Fedora"
+     ```
+     dnf -y install python3.9
+     ```
+   - "Ubuntu"
+     ```
+     apt-get -y install python3.9
+     ```
+1. Alias the Python 3.9 executable to `python3` installed by your system package manager.
+   ```
+   alias python3="python3.9"
+   ```
+1. Install Poetry using one of their [supported methods](https://python-poetry.org/docs/#installation) for your environment.
+   For example, on a Linux distribution
+   ```
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
 
-    ```
-    python --version
-    # Python 3.9.15
-    ```
-
-2. If it is not, install Python 3.9.
-
-    === "RHEL, CentOS, Fedora"
-        ```
-        dnf -y install python3.9
-        ```
-
-    === "Ubuntu"
-
-        ```
-        apt-get -y install python3.9
-        ```
-
-3. Alias the Python 3.9 executable to `python3` installed by your system package manager.
-
-    ```
-    alias python3="python3.9"
-    ```
-
-4. Install Poetry using one of their [supported methods](https://python-poetry.org/docs/#installation) for your environment.
-
-    For example, on a Linux distribution
-    ```
-    curl -sSL https://install.python-poetry.org | python3 -
-    ```
-
-    Make sure to install Poetry into __exactly one Python executable__ on your
-    system. If something goes wrong with your package's Python virtual environment,
-    you do not want to also spend time figuring out which Poetry executable is
-    responsible for it.
-
-5. Verify your Poetry version.
-
-    ```shell
-    poetry --version
-    # Poetry (version 1.2.2)
-    ```
+   Make sure to install Poetry into __exactly one Python executable__ on your
+   system. If something goes wrong with your package's Python virtual environment,
+   you do not want to also spend time figuring out which Poetry executable is
+   responsible for it.
+1. Verify your Poetry version.
+   ```shell
+   poetry --version
+   # Poetry (version 1.2.2)
+   ```
 
 ### Create the Plugin Package
 
 #### Get Template Code
 
 1. Fulfill requirements.
-      1. Python 3.9
-2. Fork, then clone the [template repository](https://github.com/arcalot/arcaflow-plugin-template-python).
-3. Change into the template repository directory.
-4. Plugin starting directory structure.
-
-    ```
-    tree .
-    .
-    └── arcaflow-plugin-template-python        <- GitHub repo
-    ├── arcaflow_plugin_template_python    <- Python module
-    │   └── example_plugin.py
-    ├── docker-compose.yaml
-    ├── Dockerfile
-    ├── example.yaml
-    ├── LICENSE
-    ├── poetry.lock
-    ├── pyproject.toml
-    ├── README.md
-    ├── requirements.txt
-    └── tests
-        └── test_example_plugin.py
-    ```
-5. Rename the following with your desired package name.
-
-      1. GitHub repo
-      2. README title
-      3. Python module
-
-      4. `package` variable in `Dockerfile`
+   * Python 3.9
+1. Fork, then clone the [template repository](https://github.com/arcalot/arcaflow-plugin-template-python).
+1. Change into the template repository directory.
+1. Plugin starting directory structure.
+   ```
+   tree .
+   .
+   └── arcaflow-plugin-template-python        <- GitHub repo
+   ├── arcaflow_plugin_template_python    <- Python module
+   │   └── example_plugin.py
+   ├── docker-compose.yaml
+   ├── Dockerfile
+   ├── example.yaml
+   ├── LICENSE
+   ├── poetry.lock
+   ├── pyproject.toml
+   ├── README.md
+   ├── requirements.txt
+   └── tests
+       └── test_example_plugin.py
+   ```
+1. Rename the following with your desired package name.
+   1. GitHub repo
+   1. README title
+   1. Python module
+   1. `package` variable in `Dockerfile`
       ```Dockerfile
       ENV package arcaflow_plugin_template_python
       ```
-
-      5. Image source label in `Dockerfile` with your repository's URL.
+   1. Image source label in `Dockerfile` with your repository's URL.
       ```Dockerfile
       LABEL org.opencontainers.image.source="https://github.com/arcalot/arcaflow-plugin-template-python"
       ```
-
-      6. Image name in `docker-compose.yaml`
+   1. Image name in `docker-compose.yaml`
       ```yaml
       version: '3.2'
       services:
@@ -117,8 +118,7 @@ First, you will have to set up your environment.
         target: /config/example.yaml
         type: bind
       ```
-
-      7.  Plugin module import in your `tests`.
+   1. Plugin module import in your `tests`.
       ```python
       #!/usr/bin/env python3
       import unittest
